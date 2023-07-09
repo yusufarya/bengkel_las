@@ -1,0 +1,491 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.0
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Waktu pembuatan: 09 Jul 2023 pada 06.40
+-- Versi server: 10.4.24-MariaDB
+-- Versi PHP: 8.0.19
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+--
+-- Database: `bengkel_las`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `bahan_baku`
+--
+
+CREATE TABLE `bahan_baku` (
+  `kode` char(5) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `stok` double NOT NULL DEFAULT 0,
+  `harga_beli` double NOT NULL DEFAULT 0,
+  `harga_jual` double NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `bahan_baku`
+--
+
+INSERT INTO `bahan_baku` (`kode`, `nama`, `stok`, `harga_beli`, `harga_jual`) VALUES
+('00004', 'Besi 5 Meter', -38, 55000, 65000),
+('00005', 'Teriplek 3 X 3 Meter', -85, 45000, 40000),
+('00006', 'Paku Reng', -73, 25000, 30000),
+('00007', 'Kawat 5 Meter', -77, 25000, 30000),
+('00008', 'Nanananaa', -52, 90000, 100000);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `kategori`
+--
+
+CREATE TABLE `kategori` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(50) NOT NULL,
+  `keterangan` text NOT NULL,
+  `biaya` double NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `kategori`
+--
+
+INSERT INTO `kategori` (`id`, `nama`, `keterangan`, `biaya`) VALUES
+(1, 'Gerbang Dengan Roll', 'Asd', 0),
+(2, 'Tangga Besi 2 Meter', 'Tangga', 75000),
+(3, 'Jasa Pembuatan Pintu Gerbang ', '', 0),
+(4, 'Pembuatan Tangga Besi', '', 0),
+(5, 'Pembuatan Kanopi', '', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `metode_bayar`
+--
+
+CREATE TABLE `metode_bayar` (
+  `id` int(11) NOT NULL,
+  `nama_bank` varchar(20) NOT NULL,
+  `no_rek` char(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `metode_bayar`
+--
+
+INSERT INTO `metode_bayar` (`id`, `nama_bank`, `no_rek`) VALUES
+(1, 'BCA', '4584937365'),
+(2, 'BNI', '92093019203'),
+(3, 'DANA', '089898989009');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `pelanggan`
+--
+
+CREATE TABLE `pelanggan` (
+  `kode` char(5) NOT NULL,
+  `nama` varchar(50) NOT NULL,
+  `alamat` varchar(128) NOT NULL,
+  `no_telp` char(20) NOT NULL,
+  `jenis_kel` enum('L','P') NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `tgl_dibuat` date NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `pelanggan`
+--
+
+INSERT INTO `pelanggan` (`kode`, `nama`, `alamat`, `no_telp`, `jenis_kel`, `email`, `password`, `tgl_dibuat`, `status`) VALUES
+('00001', 'Nana Tng', 'Tangerang Banten', '08299900000', 'L', 'yad@gmail.com', '$2y$10$unDFp1h00kyAop87HGbzneVLYX2E64SbxOVJLOsTzRh6gpQZwKt2G', '2023-06-29', 1),
+('00002', 'Bambang Yudistira', 'Tangerang Selatan', '08999999990', 'L', 'bambang@gmail.com', '$2y$10$unDFp1h00kyAop87HGbzneVLYX2E64SbxOVJLOsTzRh6gpQZwKt2G', '2023-06-29', 1),
+('00003', 'Melisa Ar', 'Jakarta, Jawa Barat', '089871234522', 'P', 'mel@gmail.com', '$2y$10$unDFp1h00kyAop87HGbzneVLYX2E64SbxOVJLOsTzRh6gpQZwKt2G', '2023-06-29', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `pembayaran`
+--
+
+CREATE TABLE `pembayaran` (
+  `id` varchar(20) NOT NULL,
+  `kode_pesan` varchar(15) NOT NULL,
+  `tanggal` date NOT NULL,
+  `harga` double NOT NULL DEFAULT 0,
+  `no_rek` char(20) NOT NULL,
+  `gambar` text DEFAULT NULL COMMENT 'Bukti pembayaran'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `pembayaran`
+--
+
+INSERT INTO `pembayaran` (`id`, `kode_pesan`, `tanggal`, `harga`, `no_rek`, `gambar`) VALUES
+('TR195726701', 'PO2023060002', '2023-07-04', 165000, '4584937365', 'strukbank1.jpg'),
+('TR223913519', 'PO2023060003', '2023-07-07', 475000, '4584937365', 'strukbank.jpg'),
+('TR572950262', 'PO2023060006', '2023-07-09', 445000, '089898989009', NULL),
+('TR579488408', 'PO2023060007', '2023-07-08', 2875000, '4584937365', 'strukbank3.jpg'),
+('TR678051629', 'PO2023060004', '2023-07-07', 220000, '4584937365', 'strukbank2.jpg');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `pembelian`
+--
+
+CREATE TABLE `pembelian` (
+  `id` int(11) NOT NULL,
+  `nomor` varchar(20) NOT NULL,
+  `tanggal` date NOT NULL,
+  `jumlah` double NOT NULL,
+  `harga` double NOT NULL,
+  `kd_spl` char(5) NOT NULL,
+  `keterangan` varchar(100) DEFAULT NULL,
+  `kd_bayar` char(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `pembelian`
+--
+
+INSERT INTO `pembelian` (`id`, `nomor`, `tanggal`, `jumlah`, `harga`, `kd_spl`, `keterangan`, `kd_bayar`) VALUES
+(10, 'BL2023060006', '2023-06-28', 9, 267000, '00002', 'test', ''),
+(17, 'BL2023070008', '2023-07-07', 13, 365000, '00003', '', ''),
+(18, 'BL2023070009', '2023-07-08', 55, 2525000, '00002', '', ''),
+(20, 'BL2023070011', '2023-07-08', 6, 345000, '00003', '', ''),
+(27, 'BL2023070012', '2023-07-09', 10, 310000, '00002', '', '');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `pembelian_detail`
+--
+
+CREATE TABLE `pembelian_detail` (
+  `id` int(11) NOT NULL,
+  `nomor` varchar(20) NOT NULL,
+  `nourut` varchar(5) NOT NULL,
+  `kd_pesan` char(15) NOT NULL,
+  `kd_bahan_baku` char(5) NOT NULL,
+  `tanggal` date NOT NULL,
+  `qty` double DEFAULT 0,
+  `harga` double NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `pembelian_detail`
+--
+
+INSERT INTO `pembelian_detail` (`id`, `nomor`, `nourut`, `kd_pesan`, `kd_bahan_baku`, `tanggal`, `qty`, `harga`) VALUES
+(10, 'BL2023060006', '00001', 'PO2023060003', '00005', '2023-06-28', 2, 45000),
+(10, 'BL2023060006', '00002', 'PO2023060003', '00007', '2023-06-28', 1, 15000),
+(10, 'BL2023060006', '00003', 'PO2023060003', '00004', '2023-06-28', 6, 27000),
+(17, 'BL2023070008', '00001', 'PO2023060004', '00004', '2023-07-07', 1, 55000),
+(17, 'BL2023070008', '00002', 'PO2023060004', '00005', '2023-07-07', 2, 30000),
+(18, 'BL2023070009', '00001', 'PO2023060007', '00004', '2023-07-08', 10, 55000),
+(18, 'BL2023070009', '00002', 'PO2023060007', '00005', '2023-07-08', 10, 45000),
+(18, 'BL2023070009', '00003', 'PO2023060007', '00006', '2023-07-08', 10, 25000),
+(18, 'BL2023070009', '00004', 'PO2023060007', '00007', '2023-07-08', 10, 25000),
+(18, 'BL2023070009', '00005', 'PO2023060007', '00006', '2023-07-08', 5, 25000),
+(18, 'BL2023070009', '00006', 'PO2023060007', '00008', '2023-07-08', 10, 90000),
+(17, 'BL2023070008', '00003', 'PO2023060004', '00007', '2023-07-07', 10, 25000),
+(20, 'BL2023070011', '00001', 'PO2023060002', '00004', '2023-07-08', 3, 55000),
+(20, 'BL2023070011', '00002', 'PO2023060002', '00008', '2023-07-08', 1, 90000),
+(20, 'BL2023070011', '00003', 'PO2023060002', '00005', '2023-07-08', 2, 45000),
+(27, 'BL2023070012', '00001', 'PO2023060006', '00004', '2023-07-09', 2, 55000),
+(27, 'BL2023070012', '00002', 'PO2023060006', '00006', '2023-07-09', 5, 25000),
+(27, 'BL2023070012', '00003', 'PO2023060006', '00007', '2023-07-09', 3, 25000);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `penjualan`
+--
+
+CREATE TABLE `penjualan` (
+  `id` int(11) NOT NULL,
+  `nomor` varchar(20) NOT NULL,
+  `tanggal` date NOT NULL,
+  `jumlah` double NOT NULL,
+  `harga` double NOT NULL,
+  `kd_plg` char(5) NOT NULL,
+  `keterangan` varchar(100) DEFAULT NULL,
+  `kd_bayar` char(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `penjualan`
+--
+
+INSERT INTO `penjualan` (`id`, `nomor`, `tanggal`, `jumlah`, `harga`, `kd_plg`, `keterangan`, `kd_bayar`) VALUES
+(4, 'JL2023060002', '2023-06-29', 14, 478000, '00001', '', ''),
+(6, 'JL2023070003', '2023-07-04', 9, 500000, '00002', '', ''),
+(17, 'JL2023070005', '2023-07-08', 13, 445000, '00001', '', ''),
+(18, 'JL2023070006', '2023-07-08', 55, 2800000, '00001', '', '');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `penjualan_detail`
+--
+
+CREATE TABLE `penjualan_detail` (
+  `id` int(11) NOT NULL,
+  `nomor` varchar(20) NOT NULL,
+  `nourut` varchar(5) NOT NULL,
+  `kd_pesan` char(15) NOT NULL,
+  `kd_bahan_baku` char(5) NOT NULL,
+  `tanggal` date NOT NULL,
+  `qty` double DEFAULT 0,
+  `harga` double NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `penjualan_detail`
+--
+
+INSERT INTO `penjualan_detail` (`id`, `nomor`, `nourut`, `kd_pesan`, `kd_bahan_baku`, `tanggal`, `qty`, `harga`) VALUES
+(4, 'JL2023060002', '00001', 'PO2023060002', '00004', '2023-06-29', 2, 65000),
+(4, 'JL2023060002', '00002', 'PO2023060002', '00006', '2023-06-29', 10, 30000),
+(4, 'JL2023060002', '00003', 'PO2023060002', '00008', '2023-06-29', 2, 24000),
+(17, 'JL2023070005', '00001', 'PO2023060004', '00004', '2023-07-08', 1, 65000),
+(17, 'JL2023070005', '00002', 'PO2023060004', '00005', '2023-07-08', 2, 40000),
+(17, 'JL2023070005', '00003', 'PO2023060004', '00007', '2023-07-08', 10, 30000),
+(6, 'JL2023070003', '00001', 'PO2023060003', '00005', '2023-07-04', 2, 40000),
+(6, 'JL2023070003', '00002', 'PO2023060003', '00007', '2023-07-04', 1, 30000),
+(6, 'JL2023070003', '00003', 'PO2023060003', '00004', '2023-07-04', 6, 65000),
+(18, 'JL2023070006', '00001', 'PO2023060007', '00004', '2023-07-08', 10, 65000),
+(18, 'JL2023070006', '00002', 'PO2023060007', '00005', '2023-07-08', 10, 40000),
+(18, 'JL2023070006', '00003', 'PO2023060007', '00006', '2023-07-08', 10, 30000),
+(18, 'JL2023070006', '00004', 'PO2023060007', '00007', '2023-07-08', 10, 30000),
+(18, 'JL2023070006', '00005', 'PO2023060007', '00006', '2023-07-08', 5, 30000),
+(18, 'JL2023070006', '00006', 'PO2023060007', '00008', '2023-07-08', 10, 100000);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `pesanan`
+--
+
+CREATE TABLE `pesanan` (
+  `kode` varchar(15) NOT NULL,
+  `kategori_id` varchar(50) NOT NULL,
+  `tanggal` date NOT NULL,
+  `qty` double NOT NULL DEFAULT 0,
+  `harga` double NOT NULL DEFAULT 0,
+  `keterangan` varchar(100) DEFAULT NULL,
+  `kd_plg` char(5) NOT NULL,
+  `bayar` varchar(1) NOT NULL DEFAULT 'N' COMMENT 'Y = Telah bayar',
+  `status` varchar(1) DEFAULT NULL COMMENT 'P = Proses, K = Kirim, S = Selesai',
+  `aktif` int(11) NOT NULL DEFAULT 1 COMMENT '1 = Pesan, 0 = Batal Pesan',
+  `flag` char(2) DEFAULT NULL COMMENT 'B = Beli, J = Jual'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `pesanan`
+--
+
+INSERT INTO `pesanan` (`kode`, `kategori_id`, `tanggal`, `qty`, `harga`, `keterangan`, `kd_plg`, `bayar`, `status`, `aktif`, `flag`) VALUES
+('PO2023060002', '2 ', '2023-06-11', 1, 345000, 'Agsabhj ggq', '00001', 'Y', 'A', 1, 'B'),
+('PO2023060003', '2 ', '2023-06-11', 1, 500000, 'Ssss', '00002', 'Y', 'K', 1, 'J'),
+('PO2023060004', '2 ', '2023-06-11', 1, 445000, 'Sadsadsj', '00001', 'Y', 'P', 1, 'J'),
+('PO2023060005', '2 ', '2023-06-11', 1, 440000, '111111', '00001', '', NULL, 1, NULL),
+('PO2023060006', '2 ', '2023-06-11', 1, 310000, 'Ssass1', '00003', '', NULL, 1, 'B'),
+('PO2023060007', '2 ', '2023-06-11', 1, 2800000, 'Ssass1', '00001', 'Y', 'P', 1, 'J'),
+('PO2023060008', '2 ', '2023-06-11', 1, 0, 'Ssass1', '00001', '', NULL, 0, NULL),
+('PO2023070009', '1 ', '2023-07-08', 1, 0, '', '00003', 'N', NULL, 1, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `role`
+--
+
+CREATE TABLE `role` (
+  `id` int(11) NOT NULL,
+  `role` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `role`
+--
+
+INSERT INTO `role` (`id`, `role`) VALUES
+(1, 'Admin'),
+(2, 'Driver');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `supplier`
+--
+
+CREATE TABLE `supplier` (
+  `kode` char(5) NOT NULL,
+  `nama` varchar(50) NOT NULL,
+  `alamat` varchar(128) NOT NULL,
+  `no_telp` char(20) NOT NULL,
+  `jenis_kel` enum('L','P') NOT NULL,
+  `tgl_dibuat` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `supplier`
+--
+
+INSERT INTO `supplier` (`kode`, `nama`, `alamat`, `no_telp`, `jenis_kel`, `tgl_dibuat`) VALUES
+('00002', 'Budi Senja', 'Tangerang', '087897551129', 'L', '2023-06-24'),
+('00003', 'Nani Nanaa', 'Jakarta\r\n', '08999999990', 'P', '2023-06-28');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(50) NOT NULL,
+  `tempat_lahir` varchar(40) NOT NULL,
+  `tgl_lagir` date NOT NULL,
+  `alamat` varchar(100) NOT NULL,
+  `jenis_kel` enum('L','P') NOT NULL,
+  `no_telp` char(20) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `gambar` text NOT NULL,
+  `tgl_dibuat` date NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `role_id` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `users`
+--
+
+INSERT INTO `users` (`id`, `nama`, `tempat_lahir`, `tgl_lagir`, `alamat`, `jenis_kel`, `no_telp`, `email`, `password`, `gambar`, `tgl_dibuat`, `status`, `role_id`) VALUES
+(1, 'Admin Bengkel', '', '0000-00-00', 'Tangerang Banten', '', '08122346789', 'admin@gmail.com', '$2y$10$oalo1fk51eifzUV9QddSou09HTdCaZKKYvRzaOQtbba3suCzyv3Vy', '', '2023-06-04', 1, 1),
+(2, 'Driver A', '', '0000-00-00', 'Tangerang Banten', 'L', '', 'drivera@gmail.com', '$2y$10$4t5GDSVFgnzabhbucnNh.OHKe8mIl5p6KhD2CuraEhRtpUQE5huH.', '', '2023-07-05', 1, 2),
+(4, 'Asanti Say', '', '0000-00-00', 'Jakarta Selatan\r\n', 'P', '', 'asanti@gmail.com', '$2y$10$DjRzqsrLPsmv6usgkr8H0u8G0u4BhKVeJI954AiW01yRrdIDCJbTG', '', '2023-07-05', 1, 2);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indeks untuk tabel `bahan_baku`
+--
+ALTER TABLE `bahan_baku`
+  ADD PRIMARY KEY (`kode`);
+
+--
+-- Indeks untuk tabel `kategori`
+--
+ALTER TABLE `kategori`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `metode_bayar`
+--
+ALTER TABLE `metode_bayar`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `pelanggan`
+--
+ALTER TABLE `pelanggan`
+  ADD PRIMARY KEY (`kode`);
+
+--
+-- Indeks untuk tabel `pembayaran`
+--
+ALTER TABLE `pembayaran`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `pembelian`
+--
+ALTER TABLE `pembelian`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `penjualan`
+--
+ALTER TABLE `penjualan`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `pesanan`
+--
+ALTER TABLE `pesanan`
+  ADD PRIMARY KEY (`kode`);
+
+--
+-- Indeks untuk tabel `role`
+--
+ALTER TABLE `role`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `supplier`
+--
+ALTER TABLE `supplier`
+  ADD PRIMARY KEY (`kode`);
+
+--
+-- Indeks untuk tabel `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT untuk tabel yang dibuang
+--
+
+--
+-- AUTO_INCREMENT untuk tabel `kategori`
+--
+ALTER TABLE `kategori`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT untuk tabel `metode_bayar`
+--
+ALTER TABLE `metode_bayar`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT untuk tabel `pembelian`
+--
+ALTER TABLE `pembelian`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT untuk tabel `penjualan`
+--
+ALTER TABLE `penjualan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT untuk tabel `role`
+--
+ALTER TABLE `role`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT untuk tabel `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+COMMIT;
