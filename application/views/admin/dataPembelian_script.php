@@ -3,21 +3,38 @@
         $.ajax({
             type: "POST",
             dataType: "JSON",
-            url: "<?= base_url('Transaksi/checkTransactionDetail') ?>",
+            url: "<?= base_url('Transaksi/isCanDelete') ?>",
             data: {
                 nomor: nomor,
                 table: 'pembelian_detail'
             },
-            success: function(res) {
-                if (res > 0) {
-                    bootbox.alert('<b style="color:red;">Hapus detail terlebih dahulu</b>')
+            success: function(data) {
+                
+                if (data.value > 0) {
+                    bootbox.alert('<b style="color:blue;">Pesanan tidak dapat dihapus.</b><p> karena data telah masuk transaksi penjualan</p>')
                 } else {
-                    $('.deleteTr').modal('show')
-                    $('#hapus').html('Yakin ingin menghapus data Nomor <b>' + nomor + '</b> ?')
-                    $('#del_kode').val(nomor)
+                    $.ajax({
+                        type: "POST",
+                        dataType: "JSON",
+                        url: "<?= base_url('Transaksi/checkTransactionDetail') ?>",
+                        data: {
+                            nomor: nomor,
+                            table: 'pembelian_detail'
+                        },
+                        success: function(res) {
+                            if (res > 0) {
+                                bootbox.alert('<b style="color:red;">Hapus detail terlebih dahulu</b>')
+                            } else {
+                                $('.deleteTr').modal('show')
+                                $('#hapus').html('Yakin ingin menghapus data Nomor <b>' + nomor + '</b> ?')
+                                $('#del_kode').val(nomor)
+                            }
+                        }
+                    })
                 }
             }
         })
+
         // if (level < 2) {
         // } else {
         //     bootbox.alert('<b style="color:red;">Anda tidak memiliki akses ini</b>')

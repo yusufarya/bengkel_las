@@ -217,6 +217,23 @@ function dateToWeek($qDate)
     return $retWeek;
 }
 
+function recalculateStock() {
+    $CI = get_instance();
+
+    $bahan_baku = $CI->db->get('bahan_baku')->result();
+    
+    foreach ($bahan_baku as $bb) {
+        $qryUpdate = "update bahan_baku set 
+                        stok = (select sum(pd.qty) as qty from pembelian_detail pd where pd.kd_bahan_baku = $bb->kode) 
+                        where kode = $bb->kode";
+        $CI->db->query($qryUpdate);
+        $qryUpdate = "update bahan_baku set 
+                        stok = (select sum(pd.qty) as qty from penjualan_detail pd where pd.kd_bahan_baku = $bb->kode) 
+                        where kode = $bb->kode";
+        $CI->db->query($qryUpdate);
+    }
+}
+
 function cekSession() {
     $CI = get_instance();
     $CI->db->select('users.*');

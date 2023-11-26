@@ -87,6 +87,7 @@ class Pembelian extends BaseController
 
     public function listPembelian()
     {
+        recalculateStock();
         cekSession();
         $cekSession = cekSession();
         $searchText = $this->input->post('searchText');

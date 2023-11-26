@@ -8,6 +8,7 @@ class Transaksi extends BaseController
 
     public function listPesanan()
     {
+        recalculateStock();
         cekSession();
         $cekSession = cekSession();
 
@@ -69,6 +70,18 @@ class Transaksi extends BaseController
         }
 
         echo json_encode($result);
+    }
+
+    function isCanDelete() {
+        $nomor = $this->input->post('nomor');
+        $table = $this->input->post('table');
+        $result = $this->db->get_where($table, ['nomor' => $nomor])->row_array();
+        $kode_psn = $result['kd_pesan'];
+        $qry = 'select * from penjualan_detail where kd_pesan = "'.$kode_psn.'"';
+        $data = $this->db->query($qry)->num_rows();
+
+        echo json_encode(array('value'=>$data));
+        
     }
 
     function checkTransactionDetail()

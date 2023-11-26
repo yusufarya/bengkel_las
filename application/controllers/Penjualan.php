@@ -91,6 +91,7 @@ class Penjualan extends BaseController
 
     public function listPenjualan()
     {
+        recalculateStock();
         cekSession();
         $cekSession = cekSession();
         $searchText = $this->input->post('searchText');
