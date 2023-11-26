@@ -204,7 +204,11 @@ class Transaksi extends BaseController
             $status = 'K';
         }
 
-        $dataDt = $this->db->select('SUM(qty) AS qty, SUM(qty*harga) AS jumlah, kd_pesan')->get_where($tableDt, ['nomor' => $nomor])->row_array();
+        $dataDt = $this->db->select('SUM(qty) AS qty, SUM(qty*harga) AS jumlah, kd_pesan')
+                ->group_by('kd_pesan')
+                ->get_where($tableDt, ['nomor' => $nomor])
+                ->row_array();
+        
         $jumlah = $dataDt['qty'];
         $harga = $dataDt['jumlah'];
         $kd_pesan = $dataDt['kd_pesan'];
